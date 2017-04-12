@@ -15,8 +15,6 @@ from logging import handlers
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 
-print ENV
-
 app = Flask(__name__)
 
 app.config['DEBUG'] = True
