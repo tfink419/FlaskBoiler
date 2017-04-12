@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='bootstrap.min.css') }}">
-<meta name="viewport" content = "width=device-width, initial-scale=1.0">
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="">
-<!-- Bootstrap Core CSS -->
-<link href="css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Custom CSS -->
-<link href="css/simple-sidebar.css" rel="stylesheet">
 	<head>
+		<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
+		<meta name="viewport" content = "width=device-width, initial-scale=1.0">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- Custom CSS -->
+		<link href="{{ url_for('static', filename='css/simple-sidebar.css') }}" rel="stylesheet">
 		<title>HeapSync</title>
 	</head>
-	</head>
 	<body>
-		<h1>HeapSync</h1>
-		<ul>
-		{% for item in items %}
-			<li> {{ item }} <small><a href="{{ url_for('remove_item', name=item) }}">[Remove]</a></small></li>
-		{% endfor %}
-		</ul>
-		<!-- POST request to send info-->
-		<form method="POST">
-			<input type="text" name="item">
-			<input type="submit" value="submit it yo!">
-		</form>
+		<div class="container">
+			<h1>HeapSync</h1>
+			<ul>
+			{% for item in items %}
+				<li> {{ item }} <small><a href="{{ url_for('remove_item', name=item) }}">[Remove]</a></small></li>
+			{% endfor %}
+			</ul>
+			<!-- POST request to send info-->
+			<form method="POST">
+				<input type="text" name="item">
+				<input type="submit" value="submit it yo!">
+			</form>
+		</div>
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 	</body>
 </html>

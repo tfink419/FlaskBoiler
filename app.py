@@ -2,22 +2,35 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
 from flask_bootstrap import Bootstrap 
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
+from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required, utils as security_utils
+import flask_mail as mail
+
+from os import environ as ENV
 
 # Create app
 import psycopg2
 from pandas.io import sql
 import logging
 from logging import handlers
-import creds
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
-#python variable __name__ 
-app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'shhh-itsasecret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
 
+print ENV
+
+app = Flask(__name__)
+
+app.config['DEBUG'] = True
+app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
+app.config['SECURITY_PASSWORD_SALT'] = ENV['SECURITY_PASSWORD_SALT']
+app.config['SECRET_KEY'] = ENV['SECRET_KEY']
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+# app.config['MAIL_SERVER'] = 'smtp.example.com'
+# app.config['MAIL_PORT'] = 465
+# app.config['MAIL_USE_SSL'] = True
+# app.config['MAIL_USERNAME'] = 'username'
+# app.config['MAIL_PASSWORD'] = 'password'
+# 
+# mail = Mail(app)
 db = SQLAlchemy(app)
 
 # Define models
@@ -39,15 +52,14 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
-# Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 
-db_user = creds.db_user
-db_pw = creds.db_pw
-db_url = creds.db_url
-db_port = creds.db_port
-db_name = creds.db_name
+db_user = ENV['DB_USER']
+db_pw = ENV['DB_PW']
+db_url = ENV['DB_URL']
+db_port = ENV['DB_PORT']
+db_name = ENV['DB_NAME']
 
 # def redshift_engine():
 # 	engine = sqlalchemy.create_engine("""postgresql+psycopg2://""" + db_user + ":" + db_pw + "@" + db_url + ":" + db_port + "/" + db_name)
@@ -73,16 +85,8 @@ logging.debug("after event_tables")
 @app.route("/protected/",methods=["GET"])
 @login_required
 def protected():
+    
 	return Response(response="Hello Protected World!", status=200)
-    
-@app.route("/login",methods=["GET"])
-def login_page():
-	return render_template('login.html')
-    
-@app.route("/login",methods=["POST"])
-@login_required
-def login_post():
-	return redirect(url_for('index'))
 
 #decorators 
 @app.route('/', methods=['GET', 'POST'])
@@ -91,7 +95,7 @@ def index():
 	# return '<h1>Shopping List!</h1>'
 	if request.method == 'POST':
 		event_tables.append(request.form['item'])
-	return render_template('listactions.html', items=event_tables)
+	return render_template('index.html', items=event_tables)
 
 
 @app.route('/remove/<name>')
@@ -113,7 +117,7 @@ def get_items():
 def create_user():
     db.create_all()
     user_datastore.create_user(email='tyler_fink', password='Pass1234')
-    user_datastore.create_user(email='sanjay_chakravorty', password='Pass1234')
+    user_datastore.create_user(email='sanj_chakra', password='Pass1234')
     db.session.commit()
 
 if __name__ == '__main__':
