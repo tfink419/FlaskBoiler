@@ -1,2 +1,5 @@
 flask
 flask_security
+flask_social
+oauth2client
+google-api-python-client
