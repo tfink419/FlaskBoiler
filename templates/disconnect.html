@@ -1,0 +1,9 @@
+<form name="disconnect" action="{{ url_for('social.remove_connection', provider_id=conn.provider_id, provider_user_id=conn.provider_user_id) }}" method="DELETE">
+  <input type="submit" value="Disconnect Google+" />
+</form>
+<script>
+window.onload = function(){
+  document.forms['disconnect'].submit()
+
+}
+</script>

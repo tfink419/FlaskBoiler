@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required, utils as security_utils
+from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required, utils as security_utils, current_user
 import flask_mail as mail
 from flask_social import Social
 from flask_social.datastore import SQLAlchemyConnectionDatastore
@@ -123,7 +123,7 @@ def index():
 	# return '<h1>Shopping List!</h1>'
 	if request.method == 'POST':
 		event_tables.append(request.form['item'])
-	return render_template('index.html', items=event_tables)
+	return render_template('index.html', items=event_tables, len=len)
 
 
 @app.route('/remove/<name>')
@@ -133,12 +133,19 @@ def remove_item(name):
 		event_tables.remove(name)
 	return redirect(url_for('index'))
 
-@app.route('/connect')
+@app.route('/connect_google')
 @login_required
 def connect():
     return render_template(
         'connect.html',
-        content='Connect Account Page',
+        content='Connect Account Page')
+        
+@app.route('/disconnect_google')
+@login_required
+def disconnect():
+    return render_template(
+        'disconnect.html',
+        content='Disconnect Account Page',
         conn=social.google.get_connection())
 
 #API interactions 
